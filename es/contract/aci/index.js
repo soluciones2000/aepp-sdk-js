@@ -25,13 +25,14 @@
 
 import * as R from 'ramda'
 
-import { validateArguments, transform, transformDecodedData } from './transformation'
+import { transform, transformDecodedData } from './transformation'
 import { buildContractMethods, getFunctionACI } from './helpers'
 import { isAddressValid } from '../../utils/crypto'
 import AsyncInit from '../../utils/async-init'
 import { BigNumber } from 'bignumber.js'
 import { COMPILER_LT_VERSION } from '../compiler'
 import semverSatisfies from '../../utils/semver-satisfies'
+import { validateArgumentsNew } from './transformation-new'
 
 /**
  * Validated contract call arguments using contract ACI
@@ -48,7 +49,8 @@ async function prepareArgsForEncode (aci, params) {
     throw new Error(`Function "${aci.name}" require ${aci.arguments.length} arguments of types [${aci.arguments.map(a => JSON.stringify(a.type))}] but get [${params.map(JSON.stringify)}]`)
   }
 
-  validateArguments(aci, params)
+  validateArgumentsNew(aci, params)
+  // validateArguments(aci, params)
   const bindings = aci.bindings
   // Cast argument from JS to Sophia type
   return Promise.all(aci.arguments.map(async ({ type }, i) => transform(type, params[i], {
